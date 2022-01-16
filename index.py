@@ -4,13 +4,20 @@ Created on Sat Jan 15 06:44:28 2022
 
 @author: 14154
 """
-
+#LOad up FLASK and the HTML templates.
 from flask import Flask
 from flask import render_template
 app = Flask(__name__)
 #You have to direct the FLask application to the right place to load. 
 flask_dir = "C:\\Users\\14154\\OneDrive\\Python\\climate_mapper\\python\\climate_flask_page\\templates\\"
 app=Flask(__name__,template_folder=flask_dir)
+#Load climate stuff. 
+import os
+dir1 = "C:\\Users\\14154\\OneDrive\\Python\\climate_mapper\\python\\climate_analyzer_ts\\"
+os.chdir(dir1)
+import Station_Loader_ts as load
+import Station_analyzer_ts as analyze
+
 """. https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
 The two strange @app.route lines above the function are decorators, 
 a unique feature of the Python language. A decorator modifies the function 
@@ -25,7 +32,7 @@ that follows it. A common pattern with decorators is to use them to register
 @app.route('/')
 def index():
    
-   return render_template('index.html', title='Climate Analyzer')
+   return render_template('index.html')
 if __name__ == '__main__':
   # app.run()
   # app.debug = True
