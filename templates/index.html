@@ -14,7 +14,15 @@
         climate information.</i>  
         </p>
         <h2>Enter Location and Reference Period</h2>
+            <form action="output" method="post">
+                <label for="latitude">Enter Latitude (e.g., 38.1 or -25.6)</label>
+                <input type="number" step="any" name="latitude" value="" required>
+                <label for="longitude">Enter Longitude (e.g. -138.7 or 5.2)</label>
+                <input type="number" step="any" name="longitude" value="" required>
+                <input type="submit" value="Submit">
+            </form>
     <!--INSERT FORM TO ENTER LATITUDE, LONGTIUDE, AND REFERENCE PERIOD -->
+    
     <h2>Your Local Climate</h2>
     <h3>Over Time</h3>
     <!--show figure of TMID for historcal record -->
