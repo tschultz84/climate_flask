@@ -2,10 +2,14 @@
 <html>
     <head>
         <title>How Weird is the Weather Local Climate Analyzer</title>
+       
+        
     </head>
     <body>
-    <!-- insert links to: Methodology Details, and About -->
+    
         <h1>How Weird is the Weather Local Climate Analyzer</h1>
+        <!-- this is a general way to call the URL to HTML templates in Flask -->
+        <a href="{{ url_for('index') }}">New Search</a>
         <p>This tool allows you to analyze the climate local to your region. 
         After you input your location and a time range you're cuious about, 
         it will find the closest weather station and present you with historical
@@ -15,35 +19,20 @@
         </p>
         <h2>Enter Location and Reference Period</h2>
             <form action="output" method="post">
-                <label for="latitude">Enter Latitude (e.g., 38.1 or -25.6)</label>
+                <label for="latitude">Enter Latitude (e.g., 45.64)</label>
                 <input type="number" step="any" name="latitude" value="" required>
-                <label for="longitude">Enter Longitude (e.g. -138.7 or 5.2)</label>
-                <input type="number" step="any" name="longitude" value="" required>
-                <input type="submit" value="Submit">
-            </form>
-    <!--INSERT FORM TO ENTER LATITUDE, LONGTIUDE, AND REFERENCE PERIOD -->
-    
-    <h2>Your Local Climate</h2>
-    <h3>Over Time</h3>
-    <!--show figure of TMID for historcal record -->
-    <h3>Is it Warmer than the Past?</h3>
-    <h4>YES OR NO, XF warmer</h4>
-    <p>The local climate is X Farenheit warmer today than in Y, on average. But if
-    you have ever been outside, you probably noticed that temperature varies widely
-    year to year -- in your region, by Z F degrees. Considering this natural variability, 
-    the odds of this occuring by chance are Z%, which is statistically significant. </p>
-    <h3>Has it Still Been Getting Warmer?</h3>
-    <h4>YES OR NO, by Y F per decade</h4>
-    <p>Over the psat Z years, The local climate has been trending X Farenheit per decade. Considering 
-     natural variability in this time, the odds of this occuring by chance are Z%, which is statistically significant. </p>
-    <h3>Background Data</h3>
-    <!-- INsert a table contaning station location, distance from submitted point
-    covered dates, and then summary temperature information, including ALPHA value -->
-    <h3>Monthly Average</h3>
-    <!--show figure of TMID averaged for each month over historical record -->
-    <h3>Daily Temperature Histogram Average</h3>
-    <!--show figure of TMID averaged for each month over historical record -->
-    
+                <label for="longitude">Enter Longitude (e.g. -111.04)</label>
+                <input type="number" step="any" name="longitude" value="" required>        
+                <!-- <label for="datebegin">Beginning of Reference Period:</label>
+                <input type="date" id="datebegin" name="datebegin" required>
+                <label for="dateend">End of Reference Period:</label>
+                <input type="date" id="dateend" name="dateend" required>-->
+            <input type="submit" value="Submit">
+            <p><i>Please allow for some time for the data to load. Some stations have 130 years
+            worth of data or more, and sometimes I must search multiple station data files to find
+            a complete one.</i></p>
+    </form>
+
     
     </body>
 </html>

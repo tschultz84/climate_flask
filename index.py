@@ -18,6 +18,10 @@ os.chdir(dir1)
 import Station_Loader_ts as load
 import Station_analyzer_ts as analyze
 
+
+#menu_header= <a href="url">link text</a>
+
+
 """. https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
 The two strange @app.route lines above the function are decorators, 
 a unique feature of the Python language. A decorator modifies the function 
@@ -34,14 +38,68 @@ that follows it. A common pattern with decorators is to use them to register
 def index():
     return render_template('index.html')
     #This is the output page.
-    
+  
 @app.route('/output', methods=['GET', 'POST'])
 def output():
-    #This one works for sure.
-    #return render_template('output.html', lat=request.form['latitude'])
-    return render_template('output.html', lat=request.form['latitude'], long=request.form['longitude'])
-#    return render_template('output.html', long=request.form['longitude'])
-    #return render_template('output.html')
+    
+    #Assign variables to pass.
+    lat1=float(request.form['latitude'])
+    long1=float(request.form['longitude'])
+    bdate1="1-1-2021"
+    edate1="1-31-2021"
+    data=load.LoadStation([lat1,long1],True) #Loading in Bozeman, MT coordinates
+    
+    #Pulls the interesting station metadata.
+    #Station Name. 
+    name1 = data.name_closest_st                       
+    #Station Distance frmo the Referenc Point.
+    stdist=data.miles_from_ref
+    #Station ID.
+    stid  =data.id_closest_station
+    #Lat, Lon, of the statoin. 
+    stlatlon = data.st_latlon_str
+    
+    st_info = ["Station ID: "+str(stid),
+               "Station Name: "+str(name1),
+               "Station Coordinates: "+stlatlon,
+               "Distance from Ref Point: "+str(round(stdist,1))+" miles"]
+    
+    #Then, some other meta data.
+    #The number of years in the baseline.
+    baseyears = data.yaml['BASENOYEARS']
+    #And the first year in the dataset.
+    veryfirstyear = int(data.veryfirstyear)
+    lastbaseyear = str(int(veryfirstyear+baseyears))
+    
+    #Now, analyze.
+    calc = analyze.StationAnalyzer(data.station_data,bdate1,edate1,display=True)
+    #Metrics comparing REference to Baseline Period.
+    #A string describing the baseline period.
+    basedesc = calc.base_period_string
+    alphavalue = str(100*calc.yaml['ALPHA'])+"%"
+    #Difference between temperature inr eference and baseline.
+    refdelta = calc.ref_base_delta
+    #P value of difference betwen them.
+    pvalue = str(round(100*calc.ref_pvalue,5))+"%"
+    #And statistical signitfance.
+    refsig = calc.ref_stat_sig 
+        
+    
+    
+    #name1="Bozeman"
+    #return render_template('output.html', lat=lat1, long=long1,bdate=bdate1,edate=edate1,stname=name1)
+    return render_template('output.html', 
+                           #These variables deal with the reference point and dates.
+                           lat=lat1, long=long1,bdate=bdate1,edate=edate1,
+                           #This with the station metadata.
+                           st_info=st_info,
+                           #And, some other relevant metadata about base period.
+                           lastbaseyear=lastbaseyear,veryfirstyear=veryfirstyear,
+                           #Then, data comparing reference to baseline.
+                           alphavalue = alphavalue,refdelta=refdelta,pvalue=pvalue,basedesc=basedesc,refsig=refsig
+                           )
+
+
    
    
 if __name__ == '__main__':

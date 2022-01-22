@@ -2,10 +2,12 @@
 <html>
     <head>
         <title>How Weird is the Weather Local Climate Analyzer - Result</title>
+        
     </head>
     <body>
     <!-- insert links to: Methodology Details, and About -->
         <h1>How Weird is the Weather Local Climate Analyzer - Data Result</h1>
+        <a href="{{ url_for('index') }}">New Search</a>
         <p>This tool allows you to analyze the climate local to your region. 
         After you input your location and a time range you're cuious about, 
         it will find the closest weather station and present you with historical
@@ -13,11 +15,47 @@
         temperature records, and does not include precipitation or other
         climate information.</i>  
         </p>
-    <h1>Here Is Your Latitude!</h1>
-    <!--<h3>{{ result }} degrees</h3> -->
-    <h3>{{ lat }} degrees</h3>
-    <h1>Here Is Your Longitude!</h1>
-    <h3>{{ long }} degrees</h3>
+    <h2>Reference Location and Time</h2>
+    <p>You selected an analysis for {{ lat }} latitude, {{ long }} longitude,
+    in the period between {{ bdate }} and {{ edate }}</P>
+    <h3>Nearest Station Information</h3>
+    <ul>
+    {% for st_data in st_info %}
+            <li>{{ st_data }}</li>
+        {% endfor %}
+        </li>
+    
+    
+    
+    
+    <h2>Your Local Climate</h2>
+    <!--show figure of TMID for historcal record -->
+    <h3>Temperature Analysis comparing Reference period ( {{ bdate }} to {{ edate }} ) and baseline period {{ basedesc }} </h3>
+    <h4>Result: {{ bdate }} to {{ edate }} was <i>{{ refdelta }} degrees F warmer</i> than {{ basedesc }}. </h4>
+    <h4>The odds that this would occur purely by chance are {{ pvalue }}, which 
+    {% if refsig == True %}
+    <i>is statistically significant</i>
+    {% endif %}
+    {% if refsig == False %}
+    <i>is not</i> statistically significant 
+    {% endif %}
+    ( alpha = {{ alphavalue }}.)
+     </h4>
+    
+    <p>The local climate was {{ refdelta }} Farenheit warmer. But if
+    you have ever been outside, you probably noticed that temperature varies widely. Considering this natural variability, 
+    the odds of this amount of warming occuring by chance are {{ pvalue }}. </p>
+    <h3>Has it Still Been Getting Warmer?</h3>
+    <h4>YES OR NO, by Y F per decade</h4>
+    <p>Over the psat Z years, The local climate has been trending X Farenheit per decade. Considering 
+     natural variability in this time, the odds of this occuring by chance are Z%, which is statistically significant. </p>
+    <h3>Background Data</h3>
+    <!-- INsert a table contaning station location, distance from submitted point
+    covered dates, and then summary temperature information, including ALPHA value -->
+    <h3>Monthly Average</h3>
+    <!--show figure of TMID averaged for each month over historical record -->
+    <h3>Daily Temperature Histogram Average</h3>
+    <!--show figure of TMID averaged for each month over historical record -->
     
     </body>
     </html>
