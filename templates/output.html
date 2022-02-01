@@ -23,7 +23,8 @@
     {% for st_data in st_info %}
             <li>{{ st_data }}</li>
         {% endfor %}
-        </li>
+        </ul>
+        <!-- this is the format for accessing a single list element {{ st_info.0 }} </p> -->
     
     
     
@@ -42,14 +43,35 @@
     ( alpha = {{ alphavalue }}.)
      </h4>
     
-    <p>The local climate was {{ refdelta }} Farenheit warmer. But if
+    <p>During {{ basedesc }}, local temperatures averaged {{ abs_temp.1 }} Farenheit, and during {{ bdate }} to {{ edate }},
+    they averaged {{ abs_temp.0 }} Farenheit, {{ refdelta }} degrees warmer. But if
     you have ever been outside, you probably noticed that temperature varies widely. Considering this natural variability, 
-    the odds of this amount of warming occuring by chance are {{ pvalue }}. </p>
-    <h3>Has it Still Been Getting Warmer?</h3>
-    <h4>YES OR NO, by Y F per decade</h4>
-    <p>Over the psat Z years, The local climate has been trending X Farenheit per decade. Considering 
-     natural variability in this time, the odds of this occuring by chance are Z%, which is statistically significant. </p>
-    <h3>Background Data</h3>
+    the odds that this amount of warming would occur by chance are {{ pvalue }}. </p>
+    <h3>Has it Been Getting Warmer over the past {{ trendyears }} years?</h3>
+    {% if real_trend == True %}
+    <h4>Yes, by {{ trendF }}</h4>
+    {% endif %}
+    {% if real_trend == False %}
+    <h4>No, there is no statistically significant trend in the climate</h4>
+    {% endif %}
+    
+    <p>Over the past {{ trendyears }} years, the local climate has been warming by {{ trendF }}. But each year's'
+     temperature has varied widely. Factoring in variability, the odds of this occuring by chance are {{ trend_p }}, 
+      {% if real_trend == True %}
+      which <strong>is statistically significant</strong>
+      {% endif %}
+      {% if real_trend == False %}
+       which <strong>is not</strong> statistically significant
+      {% endif %}
+      ( alpha = {{ alphavalue }}.)</p>
+     
+     
+    <h3>Nearest Station Information</h3>
+    <ul>
+    {% for gen_data in gen_info %}
+            <li>{{ gen_data }}</li>
+        {% endfor %}
+        </ul>
     <!-- INsert a table contaning station location, distance from submitted point
     covered dates, and then summary temperature information, including ALPHA value -->
     <h3>Monthly Average</h3>

@@ -18,11 +18,12 @@
         climate information.</i>  
         </p>
         <h2>Enter Location and Reference Period</h2>
+        <h4>Currently works to search USA and Canada only</h4>
             <form action="output" method="post">
-                <label for="latitude">Enter Latitude (e.g., 45.64)</label>
-                <input type="number" step="any" name="latitude" value="" required>
-                <label for="longitude">Enter Longitude (e.g. -111.04)</label>
-                <input type="number" step="any" name="longitude" value="" required>        
+                <label for="latitude">Enter Latitude (e.g., 45.64 or 37.75)</label>
+                <input type="number" step="any" name="latitude" value="" required min="17" max="72">
+                <label for="longitude">Enter Longitude (e.g. -111.04 or -122.50)</label>
+                <input type="number" step="any" name="longitude" value="" required min="-180" max="-65">        
                 <!-- <label for="datebegin">Beginning of Reference Period:</label>
                 <input type="date" id="datebegin" name="datebegin" required>
                 <label for="dateend">End of Reference Period:</label>
