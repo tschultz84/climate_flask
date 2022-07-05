@@ -62,7 +62,7 @@ def output():
 
     #Find if there's a quick analysis selection
     quick=request.form['quick_search']
-    if quick == "custom":
+    """if quick == "custom":
         #Assign others according to custom variables. 
         fbaseyear=int(request.form['fbaseyear'])
         #lbaseyear=int(request.form['lbaseyear'])
@@ -80,98 +80,98 @@ def output():
         #bdate1="1-1-2011" bdate syntax
         bdate1=f'{frefmo}-{frefday}-{frefyear}'
         #edate1="12-31-2021"
-        edate1=f'{lrefmo}-{lrefday}-{lrefyear}'
+        edate1=f'{lrefmo}-{lrefday}-{lrefyear}'"""
     #If quick select is not custom. 
-    elif quick != "custom":
-        timedesc="Custom"
-        #First, define the variables you need for all calculations. 
-        #Grab the date and year.
-        from datetime import date
-        todayts=date.today()
-        thisyear=todayts.year
-        thismonth=todayts.month
-        thisday=todayts.day
+    #elif quick != "custom":
+    timedesc="Custom"
+    #First, define the variables you need for all calculations. 
+    #Grab the date and year.
+    from datetime import date
+    todayts=date.today()
+    thisyear=todayts.year
+    thismonth=todayts.month
+    thisday=todayts.day
 
-        #The dataset is usually current within the past 3-5 days. Choose a buffer number of days
-        # to make sure you don't ask for days too much before that.
-        bufferdays = 7
+    #The dataset is usually current within the past 3-5 days. Choose a buffer number of days
+    # to make sure you don't ask for days too much before that.
+    bufferdays = 7
 
-        #Baseline years will default to the following, if custom is not chosen. 
-        fbaseyear=int(1910)
-        lbaseyear=int(fbaseyear + 35)
+    #Baseline years will default to the following, if custom is not chosen. 
+    fbaseyear=int(1910)
+    lbaseyear=int(fbaseyear + 35)
 
-        #If the user chose the prior year analysis.
-        if quick == "yearprior":
-            timedesc="Last year"
-            frefyear,lrefyear=int(thisyear-1),int(thisyear-1)
-            frefmo,frefday=1,1
-            lrefmo,lrefday=12,31
+    #If the user chose the prior year analysis.
+    if quick == "yearprior":
+        timedesc="Last year"
+        frefyear,lrefyear=int(thisyear-1),int(thisyear-1)
+        frefmo,frefday=1,1
+        lrefmo,lrefday=12,31
 
-            #bdate1="1-1-2011" bdate syntax
-            bdate1=f'{frefday}-{frefday}-{frefyear}'
-            #edate1="12-31-2021"
-            edate1=f'{lrefmo}-{lrefday}-{lrefyear}'
+        #bdate1="1-1-2011" bdate syntax
+        bdate1=f'{frefday}-{frefday}-{frefyear}'
+        #edate1="12-31-2021"
+        edate1=f'{lrefmo}-{lrefday}-{lrefyear}'
+    
+    if quick == "priordecade":
+        timedesc="Last 10 years"
+        frefyear,lrefyear=int(thisyear-10),int(thisyear-1)
+        frefmo,frefday=1,1
+        lrefmo,lrefday=12,31
+
+        #bdate1="1-1-2011" bdate syntax
+        bdate1=f'{frefday}-{frefday}-{frefyear}'
+        #edate1="12-31-2021"
+        edate1=f'{lrefmo}-{lrefday}-{lrefyear}'
+
+    #YTD or latest two week  analysis.
+    if (quick == "ytd") | (quick == "lastmonth"):
+        #The edate is the same. 
+        #If you're late in the month, your end date is just the date, minus the number of buffer days.
+        if thisday > bufferdays:
+            lrefday=thisday-bufferdays
+            lrefmo=thismonth
+        #If not, then go to 7 days before the end of last month.
+        if thisday <=bufferdays:
+            lrefday = 28-bufferdays+thisday
+            #Unless it's January, then roll back to the prior year.
+            if thismonth == 1:
+                lrefmo = 12
+                lrefyear = thisyear-1
+                
+            if thismonth > 1:
+                lrefmo = thismonth-1
+                lrefyear = thisyear
+        lrefyear=int(thisyear)
+        #edate1="12-31-2021"
+        edate1=f'{lrefday}-{lrefmo}-{lrefyear}'
+
+        #Define the beginning dates now, first for Year to Date.
+        if quick == "ytd":
+            timedesc="Year-to-date"
+            #Start defining it this way.
+            frefyear=int(thisyear)
+            #Unless you are in the first week of the year, then roll back to the prior year.
+            if (thismonth == 1) & (thisday <= bufferdays):
+                frefyear=int(thisyear-1)
+            frefday,frefmo=1,1
+            bdate1 = f'{frefday}-{frefmo}-{frefyear}' 
         
-        if quick == "priordecade":
-            timedesc="Last 10 years"
-            frefyear,lrefyear=int(thisyear-10),int(thisyear-1)
-            frefmo,frefday=1,1
-            lrefmo,lrefday=12,31
-
-            #bdate1="1-1-2011" bdate syntax
-            bdate1=f'{frefday}-{frefday}-{frefyear}'
-            #edate1="12-31-2021"
-            edate1=f'{lrefmo}-{lrefday}-{lrefyear}'
-
-        #YTD or latest two week  analysis.
-        if (quick == "ytd") | (quick == "lastmonth"):
-            #The edate is the same. 
-            #If you're late in the month, your end date is just the date, minus the number of buffer days.
-            if thisday > bufferdays:
-                lrefday=thisday-bufferdays
-                lrefmo=thismonth
-            #If not, then go to 7 days before the end of last month.
-            if thisday <=bufferdays:
-                lrefday = 28-bufferdays+thisday
-                #Unless it's January, then roll back to the prior year.
-                if thismonth == 1:
-                    lrefmo = 12
-                    lrefyear = thisyear-1
+        if quick == "lastmonth":
+            timedesc="Last month"
+            #Set the beginning analysis date.
+            frefyear=thisyear
+            #The analysis begins last month.
+            frefmo=thismonth-1
+            #If you are late in the month, then your beginning date is in the last month.
+            if thisday > (bufferdays): frefday=thisday-bufferdays #If late in the month, then begin on the same date minus buffer.
+            if thisday <=(bufferdays): frefday = 1 #If early, then just start on day 1
+                
+            #Unless it's January, then roll back to the prior year.
+            if thismonth == 1:
+                frefmo = 12
+                frefyear = thisyear-1
                     
-                if thismonth > 1:
-                    lrefmo = thismonth-1
-                    lrefyear = thisyear
-            lrefyear=int(thisyear)
-            #edate1="12-31-2021"
-            edate1=f'{lrefday}-{lrefmo}-{lrefyear}'
-
-            #Define the beginning dates now, first for Year to Date.
-            if quick == "ytd":
-                timedesc="Year-to-date"
-                #Start defining it this way.
-                frefyear=int(thisyear)
-                #Unless you are in the first week of the year, then roll back to the prior year.
-                if (thismonth == 1) & (thisday <= bufferdays):
-                    frefyear=int(thisyear-1)
-                frefday,frefmo=1,1
-                bdate1 = f'{frefday}-{frefmo}-{frefyear}' 
-            
-            if quick == "lastmonth":
-                timedesc="Last month"
-                #Set the beginning analysis date.
-                frefyear=thisyear
-                #The analysis begins last month.
-                frefmo=thismonth-1
-                #If you are late in the month, then your beginning date is in the last month.
-                if thisday > (bufferdays): frefday=thisday-bufferdays #If late in the month, then begin on the same date minus buffer.
-                if thisday <=(bufferdays): frefday = 1 #If early, then just start on day 1
-                    
-                #Unless it's January, then roll back to the prior year.
-                if thismonth == 1:
-                    frefmo = 12
-                    frefyear = thisyear-1
-                        
-                bdate1=f'{frefday}-{frefmo}-{frefyear}'
+            bdate1=f'{frefday}-{frefmo}-{frefyear}'
 
     #Now, analyze.
     print(os.getcwd())
