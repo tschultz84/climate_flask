@@ -11,73 +11,69 @@
         <p>This tool allows you to analyze the climate local to your region. 
         After you input your location and a time range you're cuious about, 
         it will find the closest weather station and present you with historical
-        climate data. <i>Please note this tool is currently limited only to
-        temperature records, and does not include precipitation or other
-        climate information.</i>  
+        climate data.
         </p>
     <h2>Reference Location and Time</h2>
-    <p>You selected an analysis for {{ lat }} latitude, {{ long }} longitude,
-    in the period between {{ bdate }} and {{ edate }}</P>
-    <h3>Nearest Station Information</h3>
+    <p>You wanted to analyze the climate at {{ station_info['Station Latitude'] }} latitude, {{ station_info['Station Longitude'] }} longitude.</p>
+    <p>{{timedesc}} Period Timeframe: {{ key_data['Time Period Covered'].iloc[1] }}. Baseline timeframe: {{ key_data['Time Period Covered'].iloc[2] }}</p> 
+    
+    <h3>Nearest Station: {{ station_info['Weather Station Name']}}, ID# {{ station_info['Station ID'] }} ( {{ station_info['Miles from Reference Point'] }} miles from your chosen point)</h3>
+    
+    
+    <img src="/static/tempcharts.png" >
+    
+    {% if key_stats['Statistically Significant?'].iloc[0] == True %}
+        <h2>It <i>is</i> warmer today than {{ yearsofdata }} years ago.</h2>
+        <h2>{{ timedesc }} was {{ key_stats['Value'].iloc[0] }} degrees F warmer</i> than the Baseline period, and this is not due to
+            natural variability (p-value = {{ 100* key_stats['P-Value of Difference'].iloc[0] }}% --
+            a statistically significant difference).</i></h2>
+        {% endif %}
+        {% if key_stats['Statistically Significant?'].iloc[0] == False %}
+        <h2>It is <i>not</i> warmer today than {{ yearsofdata }} years ago.</h2>
+        
+        <h2>{{ timedesc }} was {{ key_stats['Value'].iloc[0] }} degrees F warmer</i> than the Baseline period, but this is due to
+        natural variability (p-value = {{ 100* key_stats['P-Value of Difference'].iloc[0] }}% --
+        not a statistically significant difference).</i></h2>
+        {% endif %} 
+    
     <ul>
-    {% for st_data in st_info %}
-            <li>{{ st_data }}</li>
-        {% endfor %}
+        <li>{{timedesc}} Average Daily Temperature (F): {{ key_data['TMID Average (F) Over Entire period'].iloc[1] }}</li>
+    <li>Baseline Average Daily Temperature (F): {{ key_data['TMID Average (F) Over Entire period'].iloc[2] }}</li>
+    <li>Reference Period ({{timedesc}}): {{ key_data['Time Period Covered'].iloc[1] }} </li>
+    <li>Baseline Period: {{ key_data['Time Period Covered'].iloc[2] }} </li>
+    
+    
         </ul>
-        <!-- this is the format for accessing a single list element {{ st_info.0 }} </p> -->
     
     
     
-    
-    <h2>Your Local Climate</h2>
-    <!--show figure of TMID for historcal record -->
-    <h3>Temperature Analysis comparing Reference period ( {{ bdate }} to {{ edate }} ) and baseline period {{ basedesc }} </h3>
-    <h4>Result: {{ bdate }} to {{ edate }} was <i>{{ refdelta }} degrees F warmer</i> than {{ basedesc }}. </h4>
-    <h4>The odds that this would occur purely by chance are {{ pvalue }}, which 
-    {% if refsig == True %}
-    <i>is statistically significant</i>
-    {% endif %}
-    {% if refsig == False %}
-    <i>is not</i> statistically significant 
-    {% endif %}
-    ( alpha = {{ alphavalue }}.)
-     </h4>
-    
-    <p>During {{ basedesc }}, local temperatures averaged {{ abs_temp.1 }} Farenheit, and during {{ bdate }} to {{ edate }},
-    they averaged {{ abs_temp.0 }} Farenheit, {{ refdelta }} degrees warmer. But if
-    you have ever been outside, you probably noticed that temperature varies widely. Considering this natural variability, 
-    the odds that this amount of warming would occur by chance are {{ pvalue }}. </p>
-    <h3>Has it Been Getting Warmer over the past {{ trendyears }} years?</h3>
-    {% if real_trend == True %}
-    <h4>Yes, by {{ trendF }}</h4>
-    {% endif %}
-    {% if real_trend == False %}
-    <h4>No, there is no statistically significant trend in the climate</h4>
-    {% endif %}
-    
-    <p>Over the past {{ trendyears }} years, the local climate has been warming by {{ trendF }}. But each year's'
-     temperature has varied widely. Factoring in variability, the odds of this occuring by chance are {{ trend_p }}, 
-      {% if real_trend == True %}
-      which <strong>is statistically significant</strong>
-      {% endif %}
-      {% if real_trend == False %}
-       which <strong>is not</strong> statistically significant
-      {% endif %}
-      ( alpha = {{ alphavalue }}.)</p>
-     
-     
-    <h3>Nearest Station Information</h3>
+    {% if key_stats['Statistically Significant?'].iloc[1] == True %}
+        <h2>It <i>has</i> been getting warmer over the past 30 years.</h2>
+        <h2>The warming trend  has been {{ key_stats['Value'].iloc[1] }} per decade, and this is not due to
+            natural variability (p-value = {{ 100* key_stats['P-Value of Difference'].iloc[1] }}% --
+            a statistically significant difference).</i></h2>
+            
+        {% endif %}
+        {% if key_stats['Statistically Significant?'].iloc[1] == False %}
+        <h2>It <i>has not</i> been getting warmer over the past 30 years.</h2>
+        <h2>The warming trend  has been {{ key_stats['Value'].iloc[1] }} per decade, but this is  due to
+            natural variability (p-value = {{ 100* key_stats['P-Value of Difference'].iloc[1] }}% --
+            not a statistically significant difference).</i></h2>
+        {% endif %} 
+
+    <h3>Detailed Information about this Weather Station</h3>
     <ul>
-    {% for gen_data in gen_info %}
-            <li>{{ gen_data }}</li>
+        {% for item in station_info.iteritems() %}
+            <li>{{ item.0 }}:   {{ item.1 }}</li>
         {% endfor %}
+        
+        {%  for column in key_data %}
+            <li>{{ column }}: {{key_data[column].iloc[0]}} </li>
+        {% endfor %}
+            
         </ul>
-    <!-- INsert a table contaning station location, distance from submitted point
-    covered dates, and then summary temperature information, including ALPHA value -->
-    <h3>Monthly Average</h3>
-    <!--show figure of TMID averaged for each month over historical record -->
-    <h3>Daily Temperature Histogram Average</h3>
-    <!--show figure of TMID averaged for each month over historical record -->
+        <!-- this is the format for accessing a single list element  st_info.0  </p> -->
+        
     
     </body>
     </html>

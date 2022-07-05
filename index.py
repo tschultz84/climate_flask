@@ -7,16 +7,30 @@ Created on Sat Jan 15 06:44:28 2022
 #LOad up FLASK and the HTML templates.
 #from flask import Flask
 from flask import Flask, render_template, request
+import matplotlib.pyplot as plt
+import json
+import pandas as pd
+f=open('C:\\Users\\14154\\OneDrive\\Python\\climate-projects\\climate_flask_page\\filedirs.json')
+data = json.load(f)
+FLASKDIR = data['FLASKDIR']
+IMAGEDIR = data['IMAGEDIR']
+ROOTDIR = data['ROOTDIR']
+f.close()
 app = Flask(__name__)
 #You have to direct the FLask application to the right place to load. 
-flask_dir = "C:\\Users\\14154\\OneDrive\\Python\\climate_mapper\\python\\climate_flask_page\\templates\\"
+#flask_dir = "C:\\Users\\14154\\OneDrive\\Python\\climate-projects\\climate_flask_page\\templates\\"
+flask_dir=FLASKDIR
 app=Flask(__name__,template_folder=flask_dir)
 #Load climate stuff. 
 import os
-dir1 = "C:\\Users\\14154\\OneDrive\\Python\\climate_mapper\\python\\climate_analyzer_ts\\"
-os.chdir(dir1)
-import Station_Loader_ts as load
-import Station_analyzer_ts as analyze
+import json
+
+import Station_analyzer_ts_flask as analyze
+import importlib
+importlib.reload(analyze)
+#import Station_Loader_ts as load
+from IPython.display import Image
+
 
 
 #menu_header= <a href="url">link text</a>
@@ -42,100 +56,164 @@ def index():
 @app.route('/output', methods=['GET', 'POST'])
 def output():
     
-    #Assign variables to pass.
+    #Assign the latitude/longitude variables to pass.
     lat1=float(request.form['latitude'])
     long1=float(request.form['longitude'])
-    bdate1="1-1-2011"
-    edate1="12-31-2021"
-    data=load.LoadStation([lat1,long1],True) #Loading in Bozeman, MT coordinates
-    
-    #Pulls the interesting station metadata.
-    #Station Name. 
-    name1 = data.name_closest_st                       
-    #Station Distance frmo the Referenc Point.
-    stdist=data.miles_from_ref
-    #Station ID.
-    stid  =data.id_closest_station
-    #Lat, Lon, of the statoin. 
-    stlatlon = data.st_latlon_str
-    
-    st_info = ["Station ID: "+str(stid),
-               "Station Name: "+str(name1),
-               "Station Coordinates: "+stlatlon,
-               "Distance from Ref Point: "+str(round(stdist,1))+" miles"]
-    
-    #Then, some other meta data.
-    #The number of years in the baseline.
-    baseyears = data.yaml['BASENOYEARS']
-    #And the first year in the dataset.
-    veryfirstyear = int(data.veryfirstyear)
-    lastbaseyear = str(int(veryfirstyear+baseyears))
-    
-    #Now, analyze.
-    calc = analyze.StationAnalyzer(data.station_data,bdate1,edate1,display=True)
-    #Metrics comparing REference to Baseline Period.
-    #A string describing the baseline period.
-    basedesc = calc.base_period_string
-    alphavalue = str(100*calc.yaml['ALPHA'])+"%"
-    #Ref and Baseline data points. 
-    abs_temp =[round(calc.refmean,1),round(calc.basemean,1)]
-    
-    #Difference between temperature inr eference and baseline.
-    refdelta = calc.ref_base_delta
-    #P value of difference betwen them.
-    pvalue = str(round(100*calc.ref_pvalue,2))+"%"
-    #And statistical signitfance.
-    refsig = calc.ref_stat_sig 
-    
-    #TREND RELATED DATA
-    #The number of years in the recent trend.
-    trendyears=calc.yaml['RECENT_TREND_YEARS']
-    #The warming trend, in Farenheight degrees per decde.
-    trendF = calc.trend_data_str
-    #The trend's p-value and whether it is statistically significant.
-    trend_p= str(round(100*calc.trend_p ,2))+"%"
-    real_trend = calc.trend_is_real
+
+    #Find if there's a quick analysis selection
+    quick=request.form['quick_search']
+    if quick == "custom":
+        #Assign others according to custom variables. 
+        fbaseyear=int(request.form['fbaseyear'])
+        #lbaseyear=int(request.form['lbaseyear'])
+        lbaseyear=int(fbaseyear + 35)
+
+        frefyear=int(request.form['frefyear'])
+        lrefyear=int(request.form['lrefyear'])
+
+        frefmo=int(request.form['frefmo'])
+        frefday=int(request.form['frefday'])
+
+        lrefmo=int(request.form['lrefmo'])
+        lrefday=int(request.form['lrefday'])
+
+        #bdate1="1-1-2011" bdate syntax
+        bdate1=f'{frefmo}-{frefday}-{frefyear}'
+        #edate1="12-31-2021"
+        edate1=f'{lrefmo}-{lrefday}-{lrefyear}'
+    #If quick select is not custom. 
+    elif quick != "custom":
+        timedesc="Custom"
+        #First, define the variables you need for all calculations. 
+        #Grab the date and year.
+        from datetime import date
+        todayts=date.today()
+        thisyear=todayts.year
+        thismonth=todayts.month
+        thisday=todayts.day
+
+        #The dataset is usually current within the past 3-5 days. Choose a buffer number of days
+        # to make sure you don't ask for days too much before that.
+        bufferdays = 7
+
+        #Baseline years will default to the following, if custom is not chosen. 
+        fbaseyear=int(1910)
+        lbaseyear=int(fbaseyear + 35)
+
+        #If the user chose the prior year analysis.
+        if quick == "yearprior":
+            timedesc="Last year"
+            frefyear,lrefyear=int(thisyear-1),int(thisyear-1)
+            frefmo,frefday=1,1
+            lrefmo,lrefday=12,31
+
+            #bdate1="1-1-2011" bdate syntax
+            bdate1=f'{frefday}-{frefday}-{frefyear}'
+            #edate1="12-31-2021"
+            edate1=f'{lrefmo}-{lrefday}-{lrefyear}'
         
-    ##THese are key values to return out of the function.
-    alltimestr = calc.alltimestr #A string describing all the weather station dates
-    whole_mean = calc.whole_mean #Average temperature ove entire record
-    whole_max_info = calc.whole_max_info #of form - maxium temperature, whole record, maxdate [whole_tmax,maxdate]
-    whole_min_info = calc.whole_min_info # min temp whole record, mindate[ whole_tmin,mindate]
-    ref_max_info = calc.ref_max_info # ref max temp, datte [ref_max,rmaxdate]
-    ref_min_info =  calc.ref_min_info # ref min temp, date [ref_min,rmindate]
+        if quick == "priordecade":
+            timedesc="Last 10 years"
+            frefyear,lrefyear=int(thisyear-10),int(thisyear-1)
+            frefmo,frefday=1,1
+            lrefmo,lrefday=12,31
+
+            #bdate1="1-1-2011" bdate syntax
+            bdate1=f'{frefday}-{frefday}-{frefyear}'
+            #edate1="12-31-2021"
+            edate1=f'{lrefmo}-{lrefday}-{lrefyear}'
+
+        #YTD or latest two week  analysis.
+        if (quick == "ytd") | (quick == "lastmonth"):
+            #The edate is the same. 
+            #If you're late in the month, your end date is just the date, minus the number of buffer days.
+            if thisday > bufferdays:
+                lrefday=thisday-bufferdays
+                lrefmo=thismonth
+            #If not, then go to 7 days before the end of last month.
+            if thisday <=bufferdays:
+                lrefday = 28-bufferdays+thisday
+                #Unless it's January, then roll back to the prior year.
+                if thismonth == 1:
+                    lrefmo = 12
+                    lrefyear = thisyear-1
+                    
+                if thismonth > 1:
+                    lrefmo = thismonth-1
+                    lrefyear = thisyear
+            lrefyear=int(thisyear)
+            #edate1="12-31-2021"
+            edate1=f'{lrefday}-{lrefmo}-{lrefyear}'
+
+            #Define the beginning dates now, first for Year to Date.
+            if quick == "ytd":
+                timedesc="Year-to-date"
+                #Start defining it this way.
+                frefyear=int(thisyear)
+                #Unless you are in the first week of the year, then roll back to the prior year.
+                if (thismonth == 1) & (thisday <= bufferdays):
+                    frefyear=int(thisyear-1)
+                frefday,frefmo=1,1
+                bdate1 = f'{frefday}-{frefmo}-{frefyear}' 
+            
+            if quick == "lastmonth":
+                timedesc="Last month"
+                #Set the beginning analysis date.
+                frefyear=thisyear
+                #The analysis begins last month.
+                frefmo=thismonth-1
+                #If you are late in the month, then your beginning date is in the last month.
+                if thisday > (bufferdays): frefday=thisday-bufferdays #If late in the month, then begin on the same date minus buffer.
+                if thisday <=(bufferdays): frefday = 1 #If early, then just start on day 1
+                    
+                #Unless it's January, then roll back to the prior year.
+                if thismonth == 1:
+                    frefmo = 12
+                    frefyear = thisyear-1
+                        
+                bdate1=f'{frefday}-{frefmo}-{frefyear}'
+
+    #Now, analyze.
+    print(os.getcwd())
+    calc = analyze.StationAnalyzer([lat1,long1],Firstyear=fbaseyear,Lastbaseyear=lbaseyear)
+    calc.change_ref_dates([frefyear,lrefyear],[[frefmo,frefday],[lrefmo,lrefday]])
+    calc.key_data
+    calc.key_stats
+    data = calc.stationobj #Data on the station itself.  
+    yearsofdata=int(lrefyear)-int(calc.baseperiod_all[0,1].year)
+
+    #Save the charts.
+    calc.key_charts().savefig(f'{IMAGEDIR}tempcharts.png')    
+
+    #Record the search.
+    df = pd.DataFrame(data={
+        "Latitude": [lat1],
+        "Longitude":[long1],
+        "Begining Date":[bdate1],
+        "Ending Date":[edate1],
+        "Period of search":[timedesc],
+        "First baseline year":[fbaseyear],
+        "Last baseline year":[lbaseyear],
+        "Day of search":[date.today()]
+
+
+    }) 
+    df.to_csv(f'{ROOTDIR}search_records.csv',mode='a', index=False, header=False)
+                
     
-    gen_info = [
-               "Station Name: "+str(name1),
-               "Station ID: "+str(stid),
-               "Period of Time Covered by Weather Station Data: "+alltimestr,
-               "Average Temperature (TMID) over this Period (F): "+str(round(whole_mean,2)),
-               "Maximum Temperature over this Period (F), and date(s): "+str(round(whole_max_info[0],2))+" in "+str(whole_max_info[1]),
-               "Minimum Temperature over this Period (F), and date(s): "+str(round(whole_min_info[0],2))+" in "+str(whole_min_info[1])
-               ]
-               
-               
-               #"Distance from Ref Point: "+str(round(stdist,1))+" miles"]
-    
-    #name1="Bozeman"
-    #return render_template('output.html', lat=lat1, long=long1,bdate=bdate1,edate=edate1,stname=name1)
     return render_template('output.html', 
-                           #These variables deal with the reference point and dates.
-                           lat=lat1, long=long1,bdate=bdate1,edate=edate1,
-                           #This with the station metadata.
-                           st_info=st_info,
-                           #And, some other relevant metadata about base period.
-                           lastbaseyear=lastbaseyear,veryfirstyear=veryfirstyear,
-                           #Then, data comparing reference to baseline.
-                           alphavalue = alphavalue,refdelta=refdelta,pvalue=pvalue,basedesc=basedesc,refsig=refsig,
-                           abs_temp=abs_temp,
-                           #Trend related data.
-                           trend_p=trend_p,real_trend=real_trend,trendF=trendF,trendyears=trendyears,
-                           #General climate related data
-                           gen_info=gen_info
+                           
+                           lat=lat1, long=long1,bdate=bdate1,edate=edate1,yearsofdata=yearsofdata,
+                           #THese are dataframes and series, refer tot he documentation for
+                           #station_analyzer and station_loader to review their meaning. 
+
+                           station_info=data.station_information,
+                           key_data=calc.key_data,
+                           key_stats=calc.key_stats,
+                           timedesc=timedesc
                            )
 
 
-   
    
 if __name__ == '__main__':
   # app.run()

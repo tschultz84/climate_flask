@@ -11,25 +11,72 @@
         <!-- this is a general way to call the URL to HTML templates in Flask -->
         <a href="{{ url_for('index') }}">New Search</a>
         <p>This tool allows you to analyze the climate local to your region. 
-        After you input your location and a time range you're cuious about, 
+        After you input your location and a time range you're curious about, 
         it will find the closest weather station and present you with historical
         climate data. <i>Please note this tool is currently limited only to
         temperature records, and does not include precipitation or other
         climate information.</i>  
         </p>
-        <h2>Enter Location and Reference Period</h2>
+        <h2>Enter Location</h2>
         <h4>Currently works to search USA and Canada only</h4>
             <form action="output" method="post">
+                <h4>Enter Latitude and Longitude of Point Being Analyzed</h4>
                 <label for="latitude">Enter Latitude (e.g., 45.64 or 37.75)</label>
                 <input type="number" step="any" name="latitude" value="" required min="17" max="72">
+                
                 <label for="longitude">Enter Longitude (e.g. -111.04 or -122.50)</label>
-                <input type="number" step="any" name="longitude" value="" required min="-180" max="-65">        
+                <input type="number" step="any" name="longitude" value="" required min="-180" max="-65">  
+                <br>
+        <h2>Quick Analysis for your Location</h2>
+            <input type="radio" id="priordecade" name="quick_search" required value="priordecade">
+            <label for="javascript">Prior 10 Years</label>
+
+            <input type="radio" id="prioryear" name="quick_search" required value="yearprior">
+            <label for="javascript">Prior Year</label>
+             
+            <input type="radio" id="ytd" name="quick_search" required value="ytd">
+            <label for="html">Year to Date</label><br>
+            
+            <input type="radio" id="lastmonth" name="quick_search" required value="lastmonth">
+            <label for="css">Prior Month</label><br>   
+            
+            <input type="radio" id="custom" name="quick_search" required value="custom">
+            <label for="html">Custom Search</label><br>
+
+            
+          <h2>OR, Define a Custom Analysis Period</h2>
+                <h4>Define your Baseline Period</h4>
+                
+                <label for="fbaseyear">Enter Earliest Year Required in the Dataset </label>
+                <input type="number" step="any" name="fbaseyear" required min="1850" max="1940" value = "1910">        
+                <!-- <label for="lbaseyear">Enter Last Year of Baseline Period </label>
+                <input type="number" step="any" name="lbaseyear" required min="1920" max="1980" value = "1950">  -->
+                                
+                <h4>Define Your Reference Period</h4>
+                
+                <label for="frefyear">Beginning Year</label>
+                <input type="number" step="any" name="frefyear" required min="1990" max="2022" value = "2011">        
+
+                <label for="lrefyear">Ending Year </label>
+                <input type="number" step="any" name="lrefyear" required min="1990" max="2022" value = "2021">   
+                <br><br>
+                <label for="frefmo">Beginning Month</label>
+                <input type="number" step="any" name="frefmo"  required min="1" max="12" value = "1">   
+                <label for="frefday">Beginning Day</label>
+                <input type="number" step="any" name="frefday"  required min="1" max="31" value = "1">  
+                <br><br>
+                <label for="lrefmo">Ending Month</label>
+                <input type="number" step="any" name="lrefmo"  required min="1" max="12" value = "12">   
+                <label for="lrefday">Ending Day</label>
+                <input type="number" step="any" name="lrefday"  required min="1" max="31" value = "31">   
+
+                <br>
                 <!-- <label for="datebegin">Beginning of Reference Period:</label>
                 <input type="date" id="datebegin" name="datebegin" required>
                 <label for="dateend">End of Reference Period:</label>
                 <input type="date" id="dateend" name="dateend" required>-->
             <input type="submit" value="Submit">
-            <p><i>Please allow for some time for the data to load. Some stations have 130 years
+            <p><i>Please allow for up to 30 seconds for the data to load. Some stations have 130 years
             worth of data or more, and sometimes I must search multiple station data files to find
             a complete one.</i></p>
     </form>
