@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 #import json
 import pandas as pd
 from datetime import date
+import numpy as np
 """
 f=open('C:\\Users\\14154\\OneDrive\\Python\\climate-projects\\climate_flask_page\\filedirs.json')
 data = json.load(f)
@@ -31,10 +32,9 @@ import os
 import Station_analyzer_ts_flask as analyze
 #import importlib
 #importlib.reload(analyze)
+
 #import Station_Loader_ts as load
 from IPython.display import Image
-
-
 
 #menu_header= <a href="url">link text</a>
 
