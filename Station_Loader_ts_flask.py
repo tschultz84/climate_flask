@@ -88,20 +88,26 @@ class LoadStation :
         self.NOAA_URL = 'https://www.ncei.noaa.gov/data/global-historical-climatology-network-daily/access/' #url to the directory containing the DLY files. 
 
         #First, the list of stations is generated. This function finds all the stations within search_radius nearest to the point, without applying any filters.
+        self.stationfound=True #Define this variable for use in other functions. 
         self.closest_stations = self.nearest_station(point)
-      
-        #Now, all of the stations are checked for conformance to the filters. 
-        #Add two flag variables. 
-        keep_going = True # add a flag variable to keep the loop running. 
-        isgood = False #Initialize this flag variable if a station is found to satisfy all filters.
+        if self.stationfound == True:
+            #Now, all of the stations are checked for conformance to the filters. 
+            #Add two flag variables. 
+            keep_going = True # add a flag variable to keep the loop running. 
+            isgood = False #Initialize this flag variable if a station is found to satisfy all filters.
+        if self.stationfound == False: #self.closest_stations will set this to False if no stations are found
+            isgood=False
+            keep_going=False
+        
         for index,station in self.closest_stations.iloc[1:].iterrows():
             if keep_going == True:
                 self.run_this_baby(station['ID']) #Run the download from the NOAA URL. This defines self.station_data for this station.
                 isgood = self.StationDataCheck(self.station_data) #Now, run a check on the downloaded station data. 
                 #This flag stops the loop, and assigns all variables, if checks are complete.
+                if self.stationfound==False: isgood = False
                 if isgood == True: 
                     keep_going=False #Kill the loop. 
-                    self.stationfound=True #Define this variable for o
+                    
                     print(f"Station ID# {station['ID']}, called {station['Name']} is complete. It's good to use.")
                     print(f"This station is {station['Miles_from_Ref']} miles from the reference point.")
                     #Output all the station meta information as a pandas Series. 
@@ -128,6 +134,7 @@ class LoadStation :
                     
                     print(f"Station ID# {station['ID']}, called {station['Name']} is incomplete. Do not use it.")
         if isgood==False: #If the loop is over, and no stations are found, throw an error.
+            self.stationfound=False #Define this variable for use in other functions. 
             print(f"I checked { len(self.closest_stations) } weather stations within {self.station_filters['Search Radius (deg)']} degrees of {point} in all directions.")
             print("None have data which is adequate for my use.")
             print("Please enter a different reference point, or change your search filters.")        
@@ -189,7 +196,7 @@ class LoadStation :
                 'Longitude':np.nan,
                 'Miles_from_Ref':np.nan}
                )
-           
+           self.stationfound = False
            return refdf
        #Now drops the year info, since we don't need it.
        df=df[['ID','Name','Latitude','Longitude']]

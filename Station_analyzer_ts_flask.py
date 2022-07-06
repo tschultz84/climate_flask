@@ -41,27 +41,28 @@ import imp
 imp.reload(load)
 
 class StationAnalyzer :
-    def __init__(self,point,display=True,alpha=0.01,Min_days_per_mo=15,Search_radius=3,Firstyear=1900,Basenoyears=30,
+    def __init__(self,point,display=True,alpha=0.01,Min_days_per_mo=15,Search_radius=15,Firstyear=1900,Basenoyears=30,
             Min_recent_years=5,Required_trend_years =25,Lastbaseyear=1955):
         #Load the weather station. 
         stationobj=load.LoadStation(point,False,Min_days_per_mo,Search_radius,Firstyear,Basenoyears,
             Min_recent_years,Required_trend_years,Lastbaseyear)
-
-        #Initialize some variables.
-        self.alpha=alpha
-        self.display=display
-        self.stationobj = stationobj
-        
-        #Creating the assigned value containing every single element. 
-        self.all_data_long=stationobj.station_data
-        #Then assigning off TMID, TMIN, and TMAX values, which are different
-        #columns of the input data.
-        self.tmid_array = self.all_data_long[:,[0,1,2,3,6,7]]
-        
-        
-        #Initializes the reference dates. It initializes the reference period to 2015-1-1 to 2020-12-31.
-        self.change_ref_dates([2015,2020])
-                 
+            
+        if stationobj.stationfound == True:
+            #Initialize some variables.
+            self.alpha=alpha
+            self.display=display
+            self.stationobj = stationobj
+            self.stationfound = True
+            #Creating the assigned value containing every single element. 
+            self.all_data_long=stationobj.station_data
+            #Then assigning off TMID, TMIN, and TMAX values, which are different
+            #columns of the input data.
+            self.tmid_array = self.all_data_long[:,[0,1,2,3,6,7]]
+            
+            
+            #Initializes the reference dates. It initializes the reference period to 2015-1-1 to 2020-12-31.
+            self.change_ref_dates([2015,2020])
+        if stationobj.stationfound == False: self.stationfound = False         
     #BEGIN FUNCTIONS
     """
     DATA CLEANING AND WRANGLING FUNCTIONS

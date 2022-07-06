@@ -14,66 +14,69 @@
         climate data.
         </p>
     <h2>Reference Location and Time</h2>
-    <p>You wanted to analyze the climate at {{ station_info['Station Latitude'] }} latitude, {{ station_info['Station Longitude'] }} longitude.</p>
-    <p>{{timedesc}} Period Timeframe: {{ key_data['Time Period Covered'].iloc[1] }}. Baseline timeframe: {{ key_data['Time Period Covered'].iloc[2] }}</p> 
-    
-    <h3>Nearest Station: {{ station_info['Weather Station Name']}}, ID# {{ station_info['Station ID'] }} ( {{ station_info['Miles from Reference Point'] }} miles from your chosen point)</h3>
-    
-    
-    <img src="/static/tempcharts.png" >
-    
-    {% if key_stats['Statistically Significant?'].iloc[0] == True %}
-        <h2>It <i>is</i> warmer today than {{ yearsofdata }} years ago.</h2>
-        <h2>{{ timedesc }} was {{ key_stats['Value'].iloc[0] }} degrees F warmer</i> than the Baseline period, and this is not due to
+    <p>You wanted to analyze the climate at {{ lat1 }} latitude, {{ lon1 }} longitude during the {{ timedesc }}.</p>
+    {%if stationfound == False %}
+        <h2>Unfortunately, there were no weather stations meeting basic data quality requirements in the vicinity.
+            Please complete a new search with a new latitude and longitude.
+        </h2>
+    {% endif %}
+    {% if stationfound == True %}
+        <h3>Nearest Station: {{ station_info['Weather Station Name']}}, ID# {{ station_info['Station ID'] }} ( {{ station_info['Miles from Reference Point'] }} miles from your chosen point)</h3>
+        <p>Period Timeframe: {{ key_data['Time Period Covered'].iloc[1] }}. Baseline timeframe: {{ key_data['Time Period Covered'].iloc[2] }}</p> 
+        <img src="/static/tempcharts.png" >
+        
+        {% if key_stats['Statistically Significant?'].iloc[0] == True %}
+            <h2>It <i>is</i> warmer today than {{ yearsofdata }} years ago.</h2>
+            <h2>{{ timedesc }} was {{ key_stats['Value'].iloc[0] }} degrees F warmer</i> than the Baseline period, and this is not due to
+                natural variability (p-value = {{ 100* key_stats['P-Value of Difference'].iloc[0] }}% --
+                a statistically significant difference).</i></h2>
+            {% endif %}
+            {% if key_stats['Statistically Significant?'].iloc[0] == False %}
+            <h2>It is <i>not</i> warmer today than {{ yearsofdata }} years ago.</h2>
+            
+            <h2>{{ timedesc }} was {{ key_stats['Value'].iloc[0] }} degrees F warmer</i> than the Baseline period, but this is due to
             natural variability (p-value = {{ 100* key_stats['P-Value of Difference'].iloc[0] }}% --
-            a statistically significant difference).</i></h2>
-        {% endif %}
-        {% if key_stats['Statistically Significant?'].iloc[0] == False %}
-        <h2>It is <i>not</i> warmer today than {{ yearsofdata }} years ago.</h2>
-        
-        <h2>{{ timedesc }} was {{ key_stats['Value'].iloc[0] }} degrees F warmer</i> than the Baseline period, but this is due to
-        natural variability (p-value = {{ 100* key_stats['P-Value of Difference'].iloc[0] }}% --
-        not a statistically significant difference).</i></h2>
-        {% endif %} 
-    
-    <ul>
-        <li>{{timedesc}} Average Daily Temperature (F): {{ key_data['TMID Average (F) Over Entire period'].iloc[1] }}</li>
-    <li>Baseline Average Daily Temperature (F): {{ key_data['TMID Average (F) Over Entire period'].iloc[2] }}</li>
-    <li>Reference Period ({{timedesc}}): {{ key_data['Time Period Covered'].iloc[1] }} </li>
-    <li>Baseline Period: {{ key_data['Time Period Covered'].iloc[2] }} </li>
-    
-    
-        </ul>
-    
-    
-    
-    {% if key_stats['Statistically Significant?'].iloc[1] == True %}
-        <h2>It <i>has</i> been getting warmer over the past 30 years.</h2>
-        <h2>The warming trend during this seasonal period has been {{ key_stats['Value'].iloc[1] }}, and this is not due to
-            natural variability (p-value = {{ 100* key_stats['P-Value of Difference'].iloc[1] }}% --
-            a statistically significant difference).</i></h2>
-            
-        {% endif %}
-        {% if key_stats['Statistically Significant?'].iloc[1] == False %}
-        <h2>It <i>has not</i> been getting warmer over the past 30 years.</h2>
-        <h2>The warming trend during this seasonal period has been {{ key_stats['Value'].iloc[1] }}, but this is  due to
-            natural variability (p-value = {{ 100* key_stats['P-Value of Difference'].iloc[1] }}% --
             not a statistically significant difference).</i></h2>
-        {% endif %} 
+            {% endif %} 
+        
+        <ul>
+            <li>{{timedesc}} Average Daily Temperature (F): {{ key_data['TMID Average (F) Over Entire period'].iloc[1] }}</li>
+        <li>Baseline Average Daily Temperature (F): {{ key_data['TMID Average (F) Over Entire period'].iloc[2] }}</li>
+        <li>Reference Period ({{timedesc}}): {{ key_data['Time Period Covered'].iloc[1] }} </li>
+        <li>Baseline Period: {{ key_data['Time Period Covered'].iloc[2] }} </li>
+        
+        
+            </ul>
+        
+        
+        
+        {% if key_stats['Statistically Significant?'].iloc[1] == True %}
+            <h2>It <i>has</i> been getting warmer over the past 30 years.</h2>
+            <h2>The warming trend during this seasonal period has been {{ key_stats['Value'].iloc[1] }}, and this is not due to
+                natural variability (p-value = {{ 100* key_stats['P-Value of Difference'].iloc[1] }}% --
+                a statistically significant difference).</i></h2>
+                
+            {% endif %}
+            {% if key_stats['Statistically Significant?'].iloc[1] == False %}
+            <h2>It <i>has not</i> been getting warmer over the past 30 years.</h2>
+            <h2>The warming trend during this seasonal period has been {{ key_stats['Value'].iloc[1] }}, but this is  due to
+                natural variability (p-value = {{ 100* key_stats['P-Value of Difference'].iloc[1] }}% --
+                not a statistically significant difference).</i></h2>
+            {% endif %} 
 
-    <h3>Detailed Information about this Weather Station</h3>
-    <ul>
-        {% for item in station_info.iteritems() %}
-            <li>{{ item.0 }}:   {{ item.1 }}</li>
-        {% endfor %}
-        
-        {%  for column in key_data %}
-            <li>{{ column }}: {{key_data[column].iloc[0]}} </li>
-        {% endfor %}
+        <h3>Detailed Information about this Weather Station</h3>
+        <ul>
+            {% for item in station_info.iteritems() %}
+                <li>{{ item.0 }}:   {{ item.1 }}</li>
+            {% endfor %}
             
-        </ul>
-        <!-- this is the format for accessing a single list element  st_info.0  </p> -->
-        
-    
+            {%  for column in key_data %}
+                <li>{{ column }}: {{key_data[column].iloc[0]}} </li>
+            {% endfor %}
+                
+            </ul>
+            <!-- this is the format for accessing a single list element  st_info.0  </p> -->
+            
+    {% endif %}
     </body>
     </html>
