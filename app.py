@@ -16,6 +16,7 @@ app = Flask(__name__)
 
 #Load climate stuff. 
 import os
+ROOTDIR = os.path.dirname(__file__) 
 
 import Station_analyzer_ts_flask as analyze
 #import importlib
@@ -133,13 +134,17 @@ def output():
     #Now, analyze.
     
     calc = analyze.StationAnalyzer([lat1,long1],Firstyear=fbaseyear,Lastbaseyear=lbaseyear)
-    calc.change_ref_dates([frefyear,lrefyear],[[frefmo,frefday],[lrefmo,lrefday]])
-    calc.key_data
-    calc.key_stats
-    data = calc.stationobj #Data on the station itself.  
-    yearsofdata=int(lrefyear)-int(calc.baseperiod_all[0,1].year) 
-
     
+    if calc.stationfound == True: #Only proceed with these actions if a station was found. 
+        data = calc.stationobj #Data on the station itself. 
+        calc.change_ref_dates([frefyear,lrefyear],[[frefmo,frefday],[lrefmo,lrefday]])
+        calc.key_data
+        calc.key_stats
+        yearsofdata=int(lrefyear)-int(calc.baseperiod_all[0,1].year) 
+        #Save the charts.
+        
+        calc.key_charts().savefig(f'{ROOTDIR}/static/tempcharts.png')
+        
 
     #Record the search.
     df = pd.DataFrame(data={
@@ -152,26 +157,24 @@ def output():
         "Last baseline year":[lbaseyear],
         "Day of search":[date.today()]
     }) 
-
-    #Save the charts.
-    
-    ROOTDIR = os.path.dirname(__file__) 
-    calc.key_charts().savefig(f'{ROOTDIR}/static/tempcharts.png')
     df.to_csv(f'{ROOTDIR}/search_records.csv',mode='a', index=False, header=False)
-                
-    return render_template('output.html', 
-                           
-                           lat=lat1, long=long1,bdate=bdate1,edate=edate1,yearsofdata=yearsofdata,
-                           #THese are dataframes and series, refer tot he documentation for
-                           #station_analyzer and station_loader to review their meaning. 
-
-                           station_info=data.station_information,
-                           key_data=calc.key_data,
-                           key_stats=calc.key_stats,
-                           timedesc=timedesc
-                           )
-
-
+    if calc.stationfound==True:     
+        return render_template('output.html', 
+                            lat=lat1, long=long1,bdate=bdate1,edate=edate1,
+                            yearsofdata=yearsofdata,
+                            #THese are dataframes and series, refer tot he documentation for
+                            #station_analyzer and station_loader to review their meaning. 
+                            station_info=data.station_information,
+                            key_data=calc.key_data,
+                            key_stats=calc.key_stats,
+                            timedesc=timedesc,
+                            stationfound=True
+                            )
+    if calc.stationfound==False:
+        return render_template('output.html', 
+                            lat=lat1, long=long1,bdate=bdate1,edate=edate1,timedesc=timedesc,
+                            stationfound=False
+                            )
    
 if __name__ == '__main__':
   
