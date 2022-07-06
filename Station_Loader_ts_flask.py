@@ -81,7 +81,8 @@ class LoadStation :
                 })
 
         #Files to load.
-        self.STATION_META_FILENAME = "C:\\Users\\14154\\OneDrive\\Python\\climate-projects\\climate_flask_page\\data\\ghcnd_station_master_ts_tmax.csv" #containing all the lat / lon information for the stations.
+        #self.STATION_META_FILENAME = "C:\\Users\\14154\\OneDrive\\Python\\climate-projects\\climate_flask_page\\data\\ghcnd_station_master_ts_tmax.csv" #containing all the lat / lon information for the stations.
+        self.STATION_META_FILENAME = "data\\ghcnd_station_master_ts_tmax.csv" #containing all the lat / lon information for the stations.
         self.NOAA_URL = 'https://www.ncei.noaa.gov/data/global-historical-climatology-network-daily/access/' #url to the directory containing the DLY files. 
 
         #First, the list of stations is generated. This function finds all the stations within search_radius nearest to the point, without applying any filters.
