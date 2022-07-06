@@ -1,2 +1,2 @@
 # climate_flask_page
- Python flask to go along with climate analyzer
+This flask app creates an application to allow users to check their local climate variables using the NOAA GHCNd.
