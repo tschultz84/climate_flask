@@ -1,68 +1,71 @@
-asttokens @ file:///opt/conda/conda-bld/asttokens_1646925590279/work
-backcall @ file:///home/ktietz/src/ci/backcall_1611930011877/work
-Bottleneck @ file:///C:/ci/bottleneck_1648010904582/work
+asttokens==2.0.5
+backcall==0.2.0
+Bottleneck==1.3.4
 brotlipy==0.7.0
-certifi @ file:///C:/Windows/TEMP/abs_e9b7158a-aa56-4a5b-87b6-c00d295b01fanefpc8_o/croots/recipe/certifi_1655968940823/work/certifi
-cffi @ file:///C:/ci_310/cffi_1642682485096/work
-charset-normalizer @ file:///tmp/build/80754af9/charset-normalizer_1630003229654/work
-click @ file:///C:/ci/click_1646038595831/work
-colorama @ file:///C:/Windows/TEMP/abs_9439aeb1-0254-449a-96f7-33ab5eb17fc8apleb4yn/croots/recipe/colorama_1657009099097/work
-cryptography @ file:///C:/ci/cryptography_1652083563162/work
-cycler @ file:///tmp/build/80754af9/cycler_1637851556182/work
-debugpy @ file:///D:/bld/debugpy_1649586515543/work
-decorator @ file:///opt/conda/conda-bld/decorator_1643638310831/work
-entrypoints @ file:///home/conda/feedstock_root/build_artifacts/entrypoints_1643888246732/work
-executing @ file:///opt/conda/conda-bld/executing_1646925071911/work
-Flask @ file:///opt/conda/conda-bld/flask_1648041541647/work
+certifi==2022.6.15
+cffi==1.15.0
+charset-normalizer==2.0.4
+click==8.0.4
+colorama==0.4.5
+cryptography==37.0.1
+cycler==0.11.0
+debugpy==1.6.0
+decorator==5.1.1
+entrypoints==0.4
+executing==0.8.3
+Flask==2.0.3
 fonttools==4.25.0
-idna @ file:///tmp/build/80754af9/idna_1637925883363/work
-ipykernel @ file:///D:/bld/ipykernel_1655369313836/work
-ipython @ file:///C:/ci/ipython_1651601994004/work
-itsdangerous @ file:///tmp/build/80754af9/itsdangerous_1621432558163/work
-jedi @ file:///C:/ci/jedi_1644315428289/work
-Jinja2 @ file:///opt/conda/conda-bld/jinja2_1647436528585/work
-joblib @ file:///tmp/build/80754af9/joblib_1635411271373/work
-jupyter-client @ file:///home/conda/feedstock_root/build_artifacts/jupyter_client_1654730843242/work
-jupyter-core @ file:///D:/bld/jupyter_core_1652365569005/work
-kiwisolver @ file:///C:/ci/kiwisolver_1653292407425/work
-MarkupSafe @ file:///C:/ci/markupsafe_1654508077284/work
-matplotlib @ file:///C:/ci/matplotlib-suite_1647423638658/work
-matplotlib-inline @ file:///tmp/build/80754af9/matplotlib-inline_1628242447089/work
+idna==3.3
+ipykernel==6.15.0
+ipython==8.3.0
+itsdangerous==2.0.1
+jedi==0.18.1
+Jinja2==3.0.3
+joblib==1.1.0
+jupyter-client==7.3.4
+jupyter-core==4.10.0
+kiwisolver==1.4.2
+MarkupSafe==2.1.1
+matplotlib==3.5.1
+matplotlib-inline==0.1.2
 mkl-fft==1.3.1
-mkl-random @ file:///C:/ci/mkl_random_1626186184308/work
+mkl-random==1.2.2
 mkl-service==2.4.0
 munkres==1.1.4
-nest-asyncio @ file:///home/conda/feedstock_root/build_artifacts/nest-asyncio_1648959695634/work
-numexpr @ file:///C:/Windows/Temp/abs_e2036a32-9fe9-47f3-a04c-dbb1c232ba4b334exiur/croots/recipe/numexpr_1656940304835/work
-numpy @ file:///C:/ci/numpy_and_numpy_base_1652784039997/work
-packaging @ file:///tmp/build/80754af9/packaging_1637314298585/work
-pandas @ file:///C:/ci/pandas_1650373458095/work
-parso @ file:///opt/conda/conda-bld/parso_1641458642106/work
-pickleshare @ file:///tmp/build/80754af9/pickleshare_1606932040724/work
+nest-asyncio==1.5.5
+numexpr==2.8.3
+numpy==1.22.3
+packaging==21.3
+pandas==1.4.2
+parso==0.8.3
+pickleshare==0.7.5
 Pillow==9.0.1
-prompt-toolkit @ file:///tmp/build/80754af9/prompt-toolkit_1633440160888/work
-psutil @ file:///D:/bld/psutil_1653089392436/work
-pure-eval @ file:///opt/conda/conda-bld/pure_eval_1646925070566/work
-pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
-Pygments @ file:///opt/conda/conda-bld/pygments_1644249106324/work
-pyOpenSSL @ file:///opt/conda/conda-bld/pyopenssl_1643788558760/work
-pyparsing @ file:///tmp/build/80754af9/pyparsing_1635766073266/work
-PySocks @ file:///C:/ci/pysocks_1605307512533/work
-python-dateutil @ file:///tmp/build/80754af9/python-dateutil_1626374649649/work
-pytz @ file:///C:/Windows/TEMP/abs_90eacd4e-8eff-491e-b26e-f707eba2cbe1ujvbhqz1/croots/recipe/pytz_1654762631027/work
+pip==21.2.4
+prompt-toolkit==3.0.20
+psutil==5.9.1
+pure-eval==0.2.2
+pycparser==2.21
+Pygments==2.11.2
+pyOpenSSL==22.0.0
+pyparsing==3.0.4
+PySocks==1.7.1
+python-dateutil==2.8.2
+pytz==2022.1
 pywin32==303
-pyzmq @ file:///D:/bld/pyzmq_1656183664050/work
-requests @ file:///C:/ci/requests_1656443901233/work
-scikit-learn @ file:///C:/ci/scikit-learn_1642617276183/work
-scipy @ file:///C:/ci/scipy_1641555170412/work
+pyzmq==23.2.0
+requests==2.28.0
+scikit-learn==1.0.2
+scipy==1.7.3
+setuptools==61.2.0
 sip==4.19.13
-six @ file:///tmp/build/80754af9/six_1644875935023/work
-stack-data @ file:///opt/conda/conda-bld/stack_data_1646927590127/work
-threadpoolctl @ file:///Users/ktietz/demo/mc3/conda-bld/threadpoolctl_1629802263681/work
-tornado @ file:///C:/ci/tornado_1606924294691/work
-traitlets @ file:///tmp/build/80754af9/traitlets_1636710298902/work
-urllib3 @ file:///C:/ci/urllib3_1650639883891/work
-wcwidth @ file:///Users/ktietz/demo/mc3/conda-bld/wcwidth_1629357192024/work
-Werkzeug @ file:///opt/conda/conda-bld/werkzeug_1645628268370/work
-win-inet-pton @ file:///C:/ci/win_inet_pton_1605306162074/work
+six==1.16.0
+stack-data==0.2.0
+threadpoolctl==2.2.0
+tornado==6.1
+traitlets==5.1.1
+urllib3==1.26.9
+wcwidth==0.2.5
+Werkzeug==2.0.3
+wheel==0.37.1
+win-inet-pton==1.1.0
 wincertstore==0.2
