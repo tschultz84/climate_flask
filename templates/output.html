@@ -49,14 +49,14 @@
     
     {% if key_stats['Statistically Significant?'].iloc[1] == True %}
         <h2>It <i>has</i> been getting warmer over the past 30 years.</h2>
-        <h2>The warming trend  has been {{ key_stats['Value'].iloc[1] }} per decade, and this is not due to
+        <h2>The warming trend during this seasonal period has been {{ key_stats['Value'].iloc[1] }}, and this is not due to
             natural variability (p-value = {{ 100* key_stats['P-Value of Difference'].iloc[1] }}% --
             a statistically significant difference).</i></h2>
             
         {% endif %}
         {% if key_stats['Statistically Significant?'].iloc[1] == False %}
         <h2>It <i>has not</i> been getting warmer over the past 30 years.</h2>
-        <h2>The warming trend  has been {{ key_stats['Value'].iloc[1] }} per decade, but this is  due to
+        <h2>The warming trend during this seasonal period has been {{ key_stats['Value'].iloc[1] }}, but this is  due to
             natural variability (p-value = {{ 100* key_stats['P-Value of Difference'].iloc[1] }}% --
             not a statistically significant difference).</i></h2>
         {% endif %} 

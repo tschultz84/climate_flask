@@ -30,16 +30,16 @@
         <h2>Select Analysis for your Location</h2>
             <input type="radio" id="priordecade" name="quick_search" required value="priordecade">
             <label for="javascript">Prior 10 Years</label>
-
+            <br>
             <input type="radio" id="prioryear" name="quick_search" required value="yearprior">
             <label for="javascript">Prior Year</label>
-             
+            <br>
             <input type="radio" id="ytd" name="quick_search" required value="ytd">
-            <label for="html">Year to Date</label><br>
-            
+            <label for="html">Year to Date</label>
+            <br>
             <input type="radio" id="lastmonth" name="quick_search" required value="lastmonth">
-            <label for="css">Prior Month</label><br>   
-            
+            <label for="css">Prior Month</label>   
+            <br>
             
             <input type="submit" value="Submit">
             <p><i>Please allow for up to 30 seconds for the data to load. Some stations have 130 years
@@ -47,6 +47,13 @@
             a complete one.</i></p>
     </form>
 
-    
+    <i>All data and calculations completed using the Global Historical Climatology Network daily (GHCNd) provided by the US National Oceanic and Atmospheric Administration. 
+        This dataset is globally applicable for all land areas and usually includes station readings as recent as 3-5 days in the past.
+        The analyses herein process this data raw; the only processing is to filter to identify weather stations with relatively complete 
+        weather records. All average temperature values are evaluated using the standard practice of taking the midpoint of the maximum and minimum temperature
+        for every day in the record.
+    </i>
+    <i>Webpage by Tobias Schultz, 2022.</i>
+    <i>Bugs? Feature requests? Send to alyosha1918 at gmail dot com</i>
     </body>
 </html>

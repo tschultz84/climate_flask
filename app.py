@@ -8,26 +8,14 @@ Created on Sat Jan 15 06:44:28 2022
 
 from flask import Flask, render_template, request
 import matplotlib.pyplot as plt
-#import json
 import pandas as pd
 from datetime import date
 import numpy as np
-"""
-f=open('C:\\Users\\14154\\OneDrive\\Python\\climate-projects\\climate_flask_page\\filedirs.json')
-data = json.load(f)
-FLASKDIR = data['FLASKDIR']
-IMAGEDIR = data['IMAGEDIR']
-ROOTDIR = data['ROOTDIR']
-f.close()
-"""
+
 app = Flask(__name__)
-#You have to direct the FLask application to the right place to load. 
-#flask_dir=FLASKDIR
-#app=Flask(__name__,template_folder=flask_dir)
 
 #Load climate stuff. 
 import os
-
 
 import Station_analyzer_ts_flask as analyze
 #import importlib
@@ -35,8 +23,6 @@ import Station_analyzer_ts_flask as analyze
 
 #import Station_Loader_ts as load
 from IPython.display import Image
-
-#menu_header= <a href="url">link text</a>
 
 #Index is the homepage wher data is entered.
 @app.route('/index')
@@ -55,9 +41,6 @@ def output():
     #Find if there's a quick analysis selection
     quick=request.form['quick_search']
     
-    #If quick select is not custom. 
-    #elif quick != "custom":
-    timedesc="Custom"
     #First, define the variables you need for all calculations. 
     #Grab the date and year.
     
@@ -148,16 +131,15 @@ def output():
             bdate1=f'{frefday}-{frefmo}-{frefyear}'
 
     #Now, analyze.
-    #print(os.getcwd())
+    
     calc = analyze.StationAnalyzer([lat1,long1],Firstyear=fbaseyear,Lastbaseyear=lbaseyear)
     calc.change_ref_dates([frefyear,lrefyear],[[frefmo,frefday],[lrefmo,lrefday]])
     calc.key_data
     calc.key_stats
     data = calc.stationobj #Data on the station itself.  
-    yearsofdata=int(lrefyear)-int(calc.baseperiod_all[0,1].year)
+    yearsofdata=int(lrefyear)-int(calc.baseperiod_all[0,1].year) 
 
-    #Save the charts.
-    #calc.key_charts().savefig(f'{IMAGEDIR}tempcharts.png')    
+    
 
     #Record the search.
     df = pd.DataFrame(data={
@@ -169,11 +151,13 @@ def output():
         "First baseline year":[fbaseyear],
         "Last baseline year":[lbaseyear],
         "Day of search":[date.today()]
-
-
     }) 
-    #df.to_csv(f'{ROOTDIR}search_records.csv',mode='a', index=False, header=False)
-    df.to_csv('search_records.csv',mode='a', index=False, header=False)
+
+    #Save the charts.
+    
+    ROOTDIR = os.path.dirname(__file__) 
+    calc.key_charts().savefig(f'{ROOTDIR}\\static\\tempcharts.png')
+    df.to_csv(f'{ROOTDIR}\\search_records.csv',mode='a', index=False, header=False)
                 
     return render_template('output.html', 
                            
