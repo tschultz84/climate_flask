@@ -101,6 +101,7 @@ class LoadStation :
                 #This flag stops the loop, and assigns all variables, if checks are complete.
                 if isgood == True: 
                     keep_going=False #Kill the loop. 
+                    self.stationfound=True #Define this variable for o
                     print(f"Station ID# {station['ID']}, called {station['Name']} is complete. It's good to use.")
                     print(f"This station is {station['Miles_from_Ref']} miles from the reference point.")
                     #Output all the station meta information as a pandas Series. 
