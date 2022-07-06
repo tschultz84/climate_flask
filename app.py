@@ -156,8 +156,8 @@ def output():
     #Save the charts.
     
     ROOTDIR = os.path.dirname(__file__) 
-    calc.key_charts().savefig(f'{ROOTDIR}\\static\\tempcharts.png')
-    df.to_csv(f'{ROOTDIR}\\search_records.csv',mode='a', index=False, header=False)
+    calc.key_charts().savefig(f'{ROOTDIR}/static/tempcharts.png')
+    df.to_csv(f'{ROOTDIR}/search_records.csv',mode='a', index=False, header=False)
                 
     return render_template('output.html', 
                            
